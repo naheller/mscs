@@ -6,9 +6,15 @@
       a
       null-value))
   (if (> a b) null-value
-    ((combiner) (term (a-or-null))
-		(filtered-accumulate (next a) b null-value pred combiner term next)
-		)))
+    (combiner (term (a-or-null))
+		(filtered-accumulate 
+		  (next a) 
+		  b 
+		  null-value 
+		  pred 
+		  combiner 
+		  term 
+		  next))))
 
 (define (prime? x)
   (define (get-divs y)
@@ -24,7 +30,7 @@
 	 b
 	 0
 	 prime?
-	 (lambda () +)
+	 +
 	 (lambda (x) (* x x))
 	 (lambda (x) (+ x 1))
 	 ))
