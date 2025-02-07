@@ -43,6 +43,7 @@
     	(move-card deck '() (random size)) ))
   (shuffle (make-ordered-deck) 52) )
 
+; #1 Best total
 (define (best-total hand)
   (define (bt hand aces total)
     (cond ((not (empty? hand))
@@ -63,11 +64,54 @@
 
 (define (is-ace? card) (equal? (first card) 'a))
 
+; #2 Strategy: Stop at 17
+(define (stop-at-17 cust-hand-so-far dealer-up-card)
+  (if (< (best-total cust-hand-so-far) 17)
+    #t
+    #f))
 
+; #3 Play n
+(define (play-n strategy num-games)
+  (if (= num-games 0)
+    0
+    (+ (twenty-one strategy) (play-n strategy (- num-games 1)))))
 
+; #4 Strategy: Dealer sensitive
+(define (dealer-sensitive cust-hand-so-far dealer-up-card)
+  (define SET_ONE '(a 7 8 9 10 j q k))
+  (define SET_TWO '(2 3 4 5 6))
 
+  (if (or
+	(and (< (best-total cust-hand-so-far) 17)
+	     (member? (first dealer-up-card) SET_ONE))
+	(and (< (best-total cust-hand-so-far) 12)
+	     (member? (first dealer-up-card) SET_TWO)))
+    #t
+    #f))
+	
+; #5 Stop at n
+(define (stop-at n)
+  (lambda (cust-hand-so-far dealer-up-card)
+    (if (< (best-total cust-hand-so-far) n)
+      #t
+      #f)))
 
+; #6 Valentine's
+(define (valentine cust-hand-so-far dealer-up-card)
+  (define STOP_VAL (if (has-heart? cust-hand-so-far) 19 17))
+  (if (< (best-total cust-hand-so-far) STOP_VAL) #t #f))
 
+(define (has-heart? hand)
+  (cond ((empty? hand) #f)
+	((equal? (bf (first hand)) 'h) #t)
+	(else (has-heart? (bf hand)))))
+
+; #7 Suit strat
+(define (suit-strategy suit strat-has strat-hasnt)
+  (lambda (cust-hand-so-far deal-up-card)
+    (if (member? cust-hand-so-far '2h)
+      strat-has
+      strat-hasnt)))
 
 
 ;                                      32
