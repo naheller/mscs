@@ -109,9 +109,20 @@
 ; #7 Suit strat
 (define (suit-strategy suit strat-has strat-hasnt)
   (lambda (cust-hand-so-far deal-up-card)
-    (if (member? cust-hand-so-far '2h)
-      strat-has
-      strat-hasnt)))
+    (if (has-heart? cust-hand-so-far)
+      (strat-has cust-hand-so-far deal-up-card)
+      (strat-hasnt cust-hand-so-far deal-up-card))))
 
+(define (has-suit? suit hand)
+  (cond ((empty? hand) #f)
+    ((equal? (bf (first hand)) suit) #t)
+    (else (has-suit? suit (bf hand)))))
+
+; Redefine Valentine
+(define (valentine-2 cust-hand-so-far dealer-up-card)
+  (define strategy (suit-strategy 'h (stop-at 19) (stop-at 17)))
+  (strategy cust-hand-so-far dealer-up-card))
+
+; #8 Majority
 
 ;                                      32
