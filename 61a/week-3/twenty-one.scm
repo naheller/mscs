@@ -124,5 +124,16 @@
   (strategy cust-hand-so-far dealer-up-card))
 
 ; #8 Majority
-
+(define (majority s1 s2 s3)
+  (define (bool-to-num bool)
+    (if (equal? bool #t) 1 0))
+  (lambda (hand up-card)
+    (let ((r1 (s1 hand up-card))
+	   (r2 (s2 hand up-card))
+	   (r3 (s3 hand up-card)))
+       (if (< (+
+		(bool-to-num r1)
+		(bool-to-num r2)
+		(bool-to-num r3)
+		) 2) #f #t))))
 ;                                      32
