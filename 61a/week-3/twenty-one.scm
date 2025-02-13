@@ -136,4 +136,11 @@
 		(bool-to-num r2)
 		(bool-to-num r3)
 		) 2) #f #t))))
+
+; #9 Reckless
+(define (reckless strat)
+  (lambda (hand up-card)
+    (let ((take? (strat (bl hand) up-card)))
+	  (if (equal? take? #f) #f #t))))
+
 ;                                      32
