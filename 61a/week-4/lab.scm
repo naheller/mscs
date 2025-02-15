@@ -115,3 +115,26 @@
 (define (perimeter r)
   (define lw (length-width-rect r))
   (+ (* (car lw) 2) (* (cdr lw) 2)))
+
+; Ex 2.4
+; TODO
+
+; #7
+(define x2 '(a (b c) d))
+;(car x2)
+;(cdr x2)
+;(car (cdr x2))
+
+; #8
+; Ex 2.18 - Reverse a list
+(define (get-last-item list)
+  (if (null? (cdr list))
+    (car list)
+    (get-last-item (cdr list))))
+
+(define (reverse l)
+  (define (r new-list rem-list)
+    (if (null? rem-list)
+      new-list
+      (r (cons (car rem-list) new-list) (cdr rem-list))))
+  (r '() l))
