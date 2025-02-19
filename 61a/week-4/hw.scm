@@ -30,3 +30,43 @@
   (if (null? (cdr l))
     (f (car l))
     (and (f (car l)) (for-each-2 f (cdr l)))))
+
+; Substitute
+(define (get-new-word wd old new)
+  (if (equal? wd old) new wd))
+
+(define (substitute seq old new)
+  (if (null? seq)
+    '()
+    (if (word? (car seq))
+      (cons (get-new-word (car seq) old new) (substitute (cdr seq) old new))
+      (cons (substitute (car seq) old new) (substitute (cdr seq) old new)))))
+
+; Substitute 2
+(define (get-word-at index seq)
+  (if (= index 0)
+    (car seq)
+    (get-word-at (- index 1) (cdr seq))))
+
+(define (get-index-of word seq)
+  (define (iter index rem)
+       (if (null? rem)
+	 -1
+	 (if (equal? word (car rem))
+	   index
+	   (iter (+ index 1) (cdr rem)))))
+  (iter 0 seq))
+
+(define (get-new-word-2 wd seq-old seq-new)
+  (define index (get-index-of wd seq-old))
+  (if (> index -1)
+    (get-word-at index seq-new)
+    wd))
+
+
+(define (substitute-2 seq old new)
+  (if (null? seq)
+    '()
+    (if (word? (car seq))
+      (cons (get-new-word-2 (car seq) old new) (substitute-2 (cdr seq) old new))
+      (cons (substitute-2 (car seq) old new) (substitute-2 (cdr seq) old new)))))
