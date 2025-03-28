@@ -57,15 +57,27 @@
 (define mob3 (make-mobile (make-branch 15 3)
 			  (make-branch 3 mob1)))
 ; c)
-(define (branch-torq b)
-  (if (number? (branch-struct b))
-    (* (branch-length b) (branch-struct b))
-    (+ (branch-length b) (+
-			   (branch-torq (left-branch (branch-struct b)))
-			   (branch-torq (right-branch (branch-struct b)))))))
+(define (b-torq b)
+  (* (branch-length b)
+     (if (pair? (branch-struct b))
+         (total-weight (branch-struct b))
+         (branch-struct b))))
 
 (define (balanced m)
-  (= (branch-torq (left-branch m)) (branch-torq (right-branch m))))
+  (define (iter sub-m)
+    (if (not (pair? sub-m))
+        #t
+        (and (=
+              (b-torq (left-branch sub-m))
+              (b-torq (right-branch sub-m)))
+             (and
+              (balanced (branch-struct (left-branch sub-m)))
+              (balanced (branch-struct (right-branch sub-m)))))))
+  (iter m))
+
+(balanced mob1)
+(balanced mob2)
+(balanced mob3)
 
 ; Ex 2.21
 (define (sq x) (* x x))
@@ -141,8 +153,8 @@
 (define (eql? l1 l2)
   (if (and (null? l1) (null? l2))
     #t
-    (cond (((and (not (pair? (car l1))) (not (pair? (car l2))))
+    (cond ((and (not (pair? (car l1))) (not (pair? (car l2))))
 	    (and (eq? (car l1) (car l2)) (eql? (cdr l1) (cdr l2))))
 	   ((and (pair? (car l1)) (pair? (car l2)))
 	    (and (eql? (car l1) (car l2)) (eql? (cdr l1) (cdr l2))))
-	   (else #f)))))
+	   (else #f))))
