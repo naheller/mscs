@@ -1,0 +1,57 @@
+#lang simply-scheme
+(require "obj.rkt")
+
+(define x2 44)
+
+(define-class (random-generator range)
+	      (instance-vars (count 0))
+	      (method (number)
+		      (set! count (+ 1 count))
+		      5))
+
+(define-class (coke-machine capacity unit-price)
+	      (instance-vars (stock 0) (inserted-cents 0))
+	      (method (fill num-cokes)
+		      (let ((total (+ stock num-cokes)))
+			(if (> total capacity)
+			  (set! stock capacity)
+			  (set! stock total))))
+	      (method (deposit cents)
+		      (set! inserted-cents (+ inserted-cents cents)))
+	      (method (coke)
+		      (cond
+			((< inserted-cents unit-price) "NOT ENOUGH MONEY")
+			((= stock 0) "NOT ENOUGH COKES")
+			(else 
+			  (let ((change (- inserted-cents unit-price)))
+			    (set! inserted-cents 0)
+			    (set! stock (- stock 1))
+			    change)))))
+
+(define (nth index my-list)
+  (if (= index 0)
+    (car my-list)
+    (nth (- index 1) (cdr my-list))))
+  
+(define (shuffle deck)
+  (if (null? deck)
+    '()
+    (let ((card (nth (random (length deck)) deck)))
+      (cons card (shuffle (remove card deck)))
+      )))
+
+(define ordered-deck '(AH 2H 3H QH KH AS 2S QC KC))
+(define-class (the-deck given-deck)
+	      (instance-vars (deck (shuffle given-deck)))
+	      (method (empty?)
+		      (null? deck))
+	      (method (deal)
+		      (if (ask self 'empty?)
+			'()
+			(let ((top-card (car deck)))
+			  (set! deck (cdr deck))
+			  top-card))))
+		      
+(define-class (miss-manners obj)
+	      (instance-vars (x 1))
+	      (method (please message) (ask obj message)))
